@@ -8,6 +8,10 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from employees.models import Employee
 from rest_framework import mixins,generics, viewsets
+from blogs.models import Blog,Comment
+from blogs.serializers import BlogSerializer, CommentSerializer
+from employees.filters import EmployeeFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 
 #Function Based Views
@@ -165,3 +169,30 @@ def studentDetailView(request,pk):
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset=Employee.objects.all()
     serializer_class=EmployeeSerializer
+    #filterset_fileds= ['designation']
+    filterset_class=EmployeeFilter
+
+
+class BlogsView(generics.ListCreateAPIView):
+    queryset=Blog.objects.all()
+    serializer_class=BlogSerializer
+    filter_backends=[SearchFilter, OrderingFilter]
+    search_fields=['blog_title']
+    ordering_fields=['id']
+
+
+class CommentsView(generics.ListCreateAPIView):
+    queryset=Comment.objects.all()
+    serializer_class=CommentSerializer
+
+
+class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Blog.objects.all()
+    serializer_class=BlogSerializer
+    lookup_field='pk'
+
+
+class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Comment.objects.all()
+    serializer_class=CommentSerializer
+    lookup_field='pk'
